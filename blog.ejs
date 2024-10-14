@@ -1,0 +1,22 @@
+<%- include('layout') %>
+<h2>Blog Posts</h2>
+<form action="/blogs" method="POST">
+    <input type="text" name="title" placeholder="Blog Title" required>
+    <textarea name="body" placeholder="Blog Body" required></textarea>
+    <button type="submit">Create Blog Post</button>
+</form>
+<ul>
+    <% blogs.forEach(blog => { %>
+        <li>
+            <h3><%= blog.title %></h3>
+            <p><%= blog.body %></p>
+            <p>Posted by: <%= blog.creator_name %> on <%= new Date(blog.date_created).toLocaleString() %></p>
+            <form action="/edit/<%= blog.blog_id %>" method="GET" style="display:inline;">
+                <button type="submit">Edit</button>
+            </form>
+            <form action="/delete/<%= blog.blog_id %>" method="POST" style="display:inline;">
+                <button type="submit">Delete</button>
+            </form>
+        </li>
+    <% }); %>
+</ul>
