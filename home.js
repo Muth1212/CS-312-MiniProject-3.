@@ -1,4 +1,3 @@
-// routes/home.js
 const express = require('express');
 const bcrypt = require('bcrypt');
 const router = express.Router();
@@ -8,12 +7,10 @@ const renderWithMessage = (res, view, message) => {
 };
 
 module.exports = (pool) => {
-    // Home Page
     router.get('/', (req, res) => {
         res.render('index');
     });
 
-    // Sign Up
     router.get('/signup', (req, res) => {
         res.render('signup');
     });
@@ -31,7 +28,6 @@ module.exports = (pool) => {
         res.redirect('/login');
     });
 
-    // Sign In
     router.get('/login', (req, res) => {
         res.render('login');
     });
@@ -44,11 +40,10 @@ module.exports = (pool) => {
             return renderWithMessage(res, 'login', 'Invalid credentials, please try again.');
         }
 
-        req.session.user_id = user.rows[0].user_id; // Store user ID in session
+        req.session.user_id = user.rows[0].user_id;
         res.redirect('/blogs');
     });
 
-    // Blog Feed
     router.get('/blogs', async (req, res) => {
         if (!req.session.user_id) {
             return res.redirect('/login');
@@ -57,7 +52,6 @@ module.exports = (pool) => {
         res.render('blog', { blogs: blogs.rows });
     });
 
-    // Create Blog Post
     router.post('/blogs', async (req, res) => {
         const { title, body } = req.body;
         await pool.query('INSERT INTO blogs (creator_name, creator_user_id, title, body) VALUES ($1, $2, $3, $4)',
@@ -65,12 +59,10 @@ module.exports = (pool) => {
         res.redirect('/blogs');
     });
 
-    // Edit Blog Post
     router.get('/edit/:id', async (req, res) => {
         const { id } = req.params;
         const blog = await pool.query('SELECT * FROM blogs WHERE blog_id = $1', [id]);
 
-        // Check if blog exists
         if (blog.rowCount === 0) {
             return res.redirect('/blogs');
         }
@@ -85,7 +77,6 @@ module.exports = (pool) => {
         res.redirect('/blogs');
     });
 
-    // Delete Blog Post
     router.post('/delete/:id', async (req, res) => {
         const { id } = req.params;
         await pool.query('DELETE FROM blogs WHERE blog_id = $1', [id]);
